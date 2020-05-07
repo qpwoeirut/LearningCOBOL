@@ -5,7 +5,7 @@
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. YOUR-PROGRAM-NAME.
+       PROGRAM-ID. CLOCK.
        DATA DIVISION.
            FILE SECTION.
            WORKING-STORAGE SECTION.
@@ -25,6 +25,6 @@
            DISPLAY "DD/MM/YY: "WS-CURRENT-DAY"/"WS-CURRENT-MONTH"/"
            WS-CURRENT-YEAR.
            DISPLAY "Time: "WS-CURRENT-HOURS":"WS-CURRENT-MINUTE":"
-           WS-CURRENT-SECOND":"WS-CURRENT-MILLISECONDS.
+           WS-CURRENT-SECOND"."WS-CURRENT-MILLISECONDS.
            STOP RUN.
-       END PROGRAM YOUR-PROGRAM-NAME.
+       END PROGRAM CLOCK.
