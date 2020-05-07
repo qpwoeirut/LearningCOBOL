@@ -12,5 +12,5 @@
        PROCEDURE DIVISION USING LS-INPUT.
            DISPLAY "Running ECHO-UTIL".
            DISPLAY LS-INPUT.
-           STOP RUN.
+           GOBACK.
        END PROGRAM ECHO-UTIL.
