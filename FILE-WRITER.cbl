@@ -10,7 +10,7 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
            FILE-CONTROL.
-               SELECT ARRAY ASSIGN TO WS-FILE-NAME
+               SELECT ARRAY ASSIGN TO WS-FILE-PATH
                    ORGANIZATION IS SEQUENTIAL
                    ACCESS IS SEQUENTIAL.
 
@@ -21,32 +21,36 @@
                05 ARRAY-NUMBER PIC 9(10).
 
        WORKING-STORAGE SECTION.
-           01 WS-FILE-NAME PIC X(100) VALUE "../array.txt".
+           01 WS-FILE-PATH PIC X(100).
 
-           01 WS-SIZE PIC 9(5).
+           01 WS-SIZE PIC 9(6).
            01 WS-NUMBERS.
-               05 WS-NUM PIC 9(10) OCCURS 100 TIMES INDEXED BY I.
+               05 WS-NUM PIC 9(10) OCCURS 1000000 TIMES INDEXED BY I.
 
            01 WS-DISPLAY PIC Z(9)9.
-           01 WS-SIZE-DISPLAY PIC Z(4)9.
+           01 WS-SIZE-DISPLAY PIC Z(5)9.
 
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
-           DISPLAY "Enter N, the size of the array you want to store:"
-           ACCEPT WS-SIZE.
+           DISPLAY "Enter the path of the file for these numbers:"
+           ACCEPT WS-FILE-PATH
 
-           MOVE WS-SIZE TO WS-SIZE-DISPLAY.
+           DISPLAY "Enter N (less than one million), the size of the arr
+      -     "ay you want to store:"
+           ACCEPT WS-SIZE
+
+           MOVE WS-SIZE TO WS-SIZE-DISPLAY
            DISPLAY "Enter "WS-SIZE-DISPLAY" numbers, one per line:"
 
            PERFORM GET-INPUT-PARA
            VARYING I FROM 1 BY 1
-             UNTIL I > WS-SIZE.
+             UNTIL I > WS-SIZE
 
-           OPEN OUTPUT ARRAY.
+           OPEN OUTPUT ARRAY
                PERFORM WRITE-ENTRY-PARA
                VARYING I FROM 1 BY 1
-                 UNTIL I > WS-SIZE.
-           CLOSE ARRAY.
+                 UNTIL I > WS-SIZE
+           CLOSE ARRAY
 
            STOP RUN.
 
