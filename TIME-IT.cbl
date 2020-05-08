@@ -1,7 +1,7 @@
       ******************************************************************
       * Author: Stanley Zhong
       * Date: 5/7/2020
-      * Purpose: Print the start and end time of the program
+      * Purpose: Print the time it takes for the program to run
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
@@ -34,18 +34,26 @@
                        10 WS-CURRENT-MILLISECONDS PIC 9(2).
 
                01 WS-DATE-DIFFERENCE.
-                   10 WS-DAY-DIFFERENCE         PIC 9(6).
-                   10 WS-HOUR-DIFFERENCE        PIC 9(2).
-                   10 WS-MINUTE-DIFFERENCE      PIC 9(2).
-                   10 WS-SECOND-DIFFERENCE      PIC 9(2).
-                   10 WS-MILLISECOND-DIFFERENCE PIC 9(2).
-               01 WS-MESSAGE PIC X(1000) VALUE "Calling ECHO-UTIL".
+                   10 WS-DAY-DIFFERENCE         PIC S9(6).
+                   10 WS-HOUR-DIFFERENCE        PIC S9(2).
+                   10 WS-MINUTE-DIFFERENCE      PIC S9(2).
+                   10 WS-SECOND-DIFFERENCE      PIC S9(2).
+                   10 WS-MILLISECOND-DIFFERENCE PIC S9(2).
+               01 WS-DISPLAY-DATE.
+                   10 WS-DISPLAY-DAY          PIC 9(6).
+                   10 WS-DISPLAY-HOUR         PIC 9(2).
+                   10 WS-DISPLAY-MINUTE       PIC 9(2).
+                   10 WS-DISPLAY-SECOND       PIC 9(2).
+                   10 WS-DISPLAY-MILLISECONDS PIC 9(2).
+               01 WS-MESSAGE PIC X(1000).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            MOVE FUNCTION CURRENT-DATE TO WS-START-DATE-DATA.
            CALL "DATE-TO-INTEGER"
            USING WS-START-YEAR, WS-START-MONTH, WS-START-DAY,
            WS-START-DATE-INTEGER.
+
+           ACCEPT WS-MESSAGE.
 
            DISPLAY WS-START-DATE-INTEGER.
 
@@ -56,43 +64,63 @@
 
            DISPLAY WS-CURRENT-DATE-INTEGER.
 
-           SUBTRACT WS-CURRENT-DATE-INTEGER
-           FROM WS-START-DATE-INTEGER
+           SUBTRACT WS-START-DATE-INTEGER
+           FROM WS-CURRENT-DATE-INTEGER
            GIVING WS-DAY-DIFFERENCE.
-
-           DISPLAY WS-DAY-DIFFERENCE.
 
            PERFORM GET-TIME-DIFFERENCE-PARA.
 
+           MOVE WS-DATE-DIFFERENCE TO WS-DISPLAY-DATE.
+           IF WS-DAY-DIFFERENCE < 0
+               DISPLAY "Seems like we're going back in time..."
+               DISPLAY "DD:HH:MM:SS "WS-DAY-DIFFERENCE":"
+               WS-DISPLAY-HOUR":"WS-DISPLAY-MINUTE":"
+               WS-DISPLAY-SECOND"."WS-DISPLAY-MILLISECONDS
+           ELSE
+               DISPLAY "DD:HH:MM:SS "WS-DISPLAY-DAY":"
+               WS-DISPLAY-HOUR":"WS-DISPLAY-MINUTE":"
+               WS-DISPLAY-SECOND"."WS-DISPLAY-MILLISECONDS
+           END-IF.
 
            STOP RUN.
 
        GET-TIME-DIFFERENCE-PARA.
-           SUBTRACT WS-CURRENT-HOURS
-           FROM WS-START-HOURS
+           SUBTRACT WS-START-HOURS
+           FROM WS-CURRENT-HOURS
            GIVING WS-HOUR-DIFFERENCE.
 
-           SUBTRACT WS-CURRENT-MINUTE
-           FROM WS-START-MINUTE
+           SUBTRACT WS-START-MINUTE
+           FROM WS-CURRENT-MINUTE
            GIVING WS-MINUTE-DIFFERENCE.
 
-           SUBTRACT WS-CURRENT-SECOND
-           FROM WS-START-SECOND
+           SUBTRACT WS-START-SECOND
+           FROM WS-CURRENT-SECOND
            GIVING WS-SECOND-DIFFERENCE.
+
+           SUBTRACT WS-START-MILLISECONDS
+           FROM WS-CURRENT-MILLISECONDS
+           GIVING WS-MILLISECOND-DIFFERENCE.
+
+           IF WS-MILLISECOND-DIFFERENCE < 0
+               ADD 100 TO WS-MILLISECOND-DIFFERENCE
+               SUBTRACT 1 FROM WS-SECOND-DIFFERENCE
+           END-IF.
 
            IF WS-SECOND-DIFFERENCE < 0
                ADD 60 TO WS-SECOND-DIFFERENCE
                SUBTRACT 1 FROM WS-MINUTE-DIFFERENCE
            END-IF.
 
-
            IF WS-MINUTE-DIFFERENCE < 0
                ADD 60 TO WS-MINUTE-DIFFERENCE
                SUBTRACT 1 FROM WS-HOUR-DIFFERENCE
            END-IF.
 
-           DISPLAY WS-MINUTE-DIFFERENCE.
-           DISPLAY WS-SECOND-DIFFERENCE.
+           IF WS-HOUR-DIFFERENCE < 0
+               ADD 24 TO WS-HOUR-DIFFERENCE
+               SUBTRACT 1 FROM WS-DAY-DIFFERENCE
+           END-IF.
+
 
        END PROGRAM TIME-IT.
 
