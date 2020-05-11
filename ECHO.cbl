@@ -1,7 +1,7 @@
       ******************************************************************
-      * Author:
-      * Date:
-      * Purpose:
+      * Author: Stanley Zhong
+      * Date: Updated 5/11/2020
+      * Purpose: Take input and print it
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
@@ -11,7 +11,7 @@
            01 WS-INPUT PIC X(100).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
-           ACCEPT WS-INPUT.
-           DISPLAY WS-INPUT.
+           ACCEPT WS-INPUT
+           DISPLAY WS-INPUT
            STOP RUN.
        END PROGRAM ECHO.

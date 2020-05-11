@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 4/30/2020
+      * Date: 4/30/2020, Updated 5/11/2020
       * Purpose: Print the current time and date
       * Tectonics: cobc
       ******************************************************************
@@ -22,9 +22,9 @@
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            MOVE FUNCTION CURRENT-DATE to WS-CURRENT-DATE-DATA
-           DISPLAY "DD/MM/YY: "WS-CURRENT-DAY"/"WS-CURRENT-MONTH"/"
-           WS-CURRENT-YEAR.
+           DISPLAY "MM/DD/YY: "WS-CURRENT-MONTH"/"WS-CURRENT-DAY"/"
+               WS-CURRENT-YEAR
            DISPLAY "Time: "WS-CURRENT-HOURS":"WS-CURRENT-MINUTE":"
-           WS-CURRENT-SECOND"."WS-CURRENT-MILLISECONDS.
+               WS-CURRENT-SECOND"."WS-CURRENT-MILLISECONDS
            STOP RUN.
        END PROGRAM CLOCK.

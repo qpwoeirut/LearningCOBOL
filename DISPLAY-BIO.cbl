@@ -1,7 +1,7 @@
       ******************************************************************
-      * Author:
-      * Date:
-      * Purpose:
+      * Author: Stanley Zhong
+      * Date: Updated 5/11/2020
+      * Purpose: Print some variables about me
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
@@ -9,15 +9,18 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
            01 WS-NAME PIC A(50) VALUE 'Stanley'.
+           01 WS-AGE PIC 9(3) VALUE 14.
            01 WS-SCHOOL.
                05 WS-GRADE PIC 9(2) VALUE 9.
                05 WS-SCHOOL-NAME PIC X(30) VALUE 'Gunn High School'.
-               05 WS-PI PIC 9V99999 VALUE 3.14159.
+           01 WS-DISPLAY-AGE PIC ZZ9.
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
             DISPLAY "My name is "WS-NAME
+            MOVE WS-AGE TO WS-DISPLAY-AGE.
+            DISPLAY "I am "WS-DISPLAY-AGE" years old"
             DISPLAY "I am in Grade "WS-GRADE
             DISPLAY "I attend "WS-SCHOOL-NAME
-            DISPLAY "PI is approximately "WS-PI.
+
             STOP RUN.
        END PROGRAM DISPLAY-BIO.

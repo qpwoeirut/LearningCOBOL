@@ -1,7 +1,7 @@
       ******************************************************************
-      * Author:
-      * Date:
-      * Purpose:
+      * Author: Stanley Zhong
+      * Date: Updated 5/11/2020
+      * Purpose: Call ECHO-UTIL.cbl with input
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
@@ -13,8 +13,9 @@
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            DISPLAY "Enter string to send to echo util:"
-           ACCEPT WS-INPUT.
+           ACCEPT WS-INPUT
 
-           CALL "ECHO-UTIL" USING WS-INPUT.
+           CALL "ECHO-UTIL" USING WS-INPUT
+
            STOP RUN.
        END PROGRAM EXTERNAL-CALL.

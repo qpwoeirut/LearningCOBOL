@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 4/30/2020
+      * Date: 4/30/2020, Updated 5/11/2020
       * Purpose: Write numbers to a file
       * Tectonics: cobc
       ******************************************************************
@@ -10,14 +10,14 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
            FILE-CONTROL.
-               SELECT ARRAY ASSIGN TO WS-FILE-PATH
+               SELECT ARRAY-FILE ASSIGN TO WS-FILE-PATH
                    ORGANIZATION IS SEQUENTIAL
                    ACCESS IS SEQUENTIAL.
 
        DATA DIVISION.
        FILE SECTION.
-           FD ARRAY.
-           01 ARRAY-FILE.
+           FD ARRAY-FILE.
+           01 ARRAY-DATA.
                05 ARRAY-NUMBER PIC 9(10).
 
        WORKING-STORAGE SECTION.
@@ -44,13 +44,13 @@
 
            PERFORM GET-INPUT-PARA
            VARYING I FROM 1 BY 1
-             UNTIL I > WS-SIZE
+               UNTIL I > WS-SIZE
 
-           OPEN OUTPUT ARRAY
+           OPEN OUTPUT ARRAY-FILE
                PERFORM WRITE-ENTRY-PARA
                VARYING I FROM 1 BY 1
                  UNTIL I > WS-SIZE
-           CLOSE ARRAY
+           CLOSE ARRAY-FILE
 
            STOP RUN.
 
@@ -58,8 +58,8 @@
                ACCEPT WS-NUM(I).
 
            WRITE-ENTRY-PARA.
-               MOVE WS-NUM(I) TO ARRAY-NUMBER.
-               WRITE ARRAY-FILE.
+               MOVE WS-NUM(I) TO ARRAY-NUMBER
+               WRITE ARRAY-DATA.
 
 
        END PROGRAM FILE-WRITER.

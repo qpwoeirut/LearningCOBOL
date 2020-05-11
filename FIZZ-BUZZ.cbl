@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 4/22/2020
+      * Date: 4/22/2020, Updated 5/11/2020
       * Purpose: Implementation of FizzBuzz
       * Tectonics: cobc
       ******************************************************************
@@ -13,11 +13,13 @@
            01 WS-FIVE PIC X(4) VALUE "BUZZ".
            01 WS-SEVEN PIC X(5) VALUE "SEVEN".
            01 WS-LEN PIC 9(3) VALUE 1.
-           01 WS-CONCAT PIC X(100).
+           01 WS-CONCAT PIC X(13).
        PROCEDURE DIVISION.
 
-       PERFORM PRINT-PARA UNTIL WS-NUM=500.
-       STOP RUN.
+       MAIN-PROCEDURE.
+           PERFORM PRINT-PARA UNTIL WS-NUM > 500
+
+           STOP RUN.
 
        PRINT-PARA.
            MOVE 1 TO WS-LEN.
@@ -49,11 +51,8 @@
            END-IF.
 
            SUBTRACT 1 FROM WS-LEN.
-           DISPLAY WS-CONCAT(1 : WS-LEN).
+           DISPLAY WS-CONCAT(1 : WS-LEN)
 
            ADD 1 TO WS-NUM.
-
-
-       MAIN-PROCEDURE.
 
        END PROGRAM FIZZ-BUZZ.
