@@ -1,42 +1,42 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 4/30/2020
-      * Purpose:
+      * Date: 5/11/2020
+      * Purpose: Sort a file of numbers and write it to another file
       * Tectonics: cobc
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MY-SORT.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+           FILE-CONTROL.
+               SELECT FS-INPUT-FILE ASSIGN TO WS-INPUT-FILE-NAME.
+               SELECT FS-OUTPUT-FILE ASSIGN TO WS-OUTPUT-FILE-NAME.
+               SELECT FS-WORK-FILE ASSIGN TO "tmp_work.txt".
        DATA DIVISION.
+       FILE SECTION.
+           FD FS-INPUT-FILE.
+               01 FS-INPUT-NUMBER PIC 9(10).
+           FD FS-OUTPUT-FILE.
+               01 FS-OUTPUT-NUMBER PIC 9(10).
+
+           SD FS-WORK-FILE.
+               01 FS-WORK-NUMBER PIC 9(10).
        WORKING-STORAGE SECTION.
-           01 WS-SIZE PIC 9(5).
-           01 WS-NUMBERS.
-               05 WS-NUM PIC 9(10) OCCURS 100 TIMES INDEXED BY I.
-
-           01 WS-DISPLAY PIC Z(9)9.
-
+           01 WS-INPUT-FILE-NAME PIC X(100).
+           01 WS-OUTPUT-FILE-NAME PIC X(100).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
-           DISPLAY "Enter N, the size of the array you want to sort:"
-           ACCEPT WS-SIZE.
+           DISPLAY "Input the path of the file to sort:"
+           ACCEPT WS-INPUT-FILE-NAME
 
-           MOVE WS-SIZE TO WS-DISPLAY.
-           DISPLAY "Enter "WS-DISPLAY" numbers, one per line:"
+           DISPLAY "Input the path of the file for the sorted numbers (c
+      -     "an be the same):"
+           ACCEPT WS-OUTPUT-FILE-NAME
 
-           PERFORM GET-INPUT-PARA
-           VARYING I FROM 1 BY 1
-             UNTIL I > WS-SIZE.
+           SORT FS-WORK-FILE ON ASCENDING KEY FS-INPUT-NUMBER
+           USING FS-INPUT-FILE GIVING FS-OUTPUT-FILE
 
-           PERFORM PRINT-PARA
-           VARYING I FROM 1 BY 1
-             UNTIL I > WS-SIZE.
+           CALL "PRINT-NUMBER-FILE-UTIL" USING WS-OUTPUT-FILE-NAME
 
            STOP RUN.
-
-           GET-INPUT-PARA.
-               ACCEPT WS-NUM(I).
-
-           PRINT-PARA.
-               MOVE WS-NUM(I) TO WS-DISPLAY.
-               DISPLAY WS-DISPLAY.
-
        END PROGRAM MY-SORT.
