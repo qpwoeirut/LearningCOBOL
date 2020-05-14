@@ -55,7 +55,7 @@
            DISPLAY "Enter file name"
            ACCEPT WS-FILE-NAME
 
-           OPEN INPUT FS-RECORD-FILE
+           OPEN I-O FS-RECORD-FILE
 
            PERFORM PRINT-HELP-PARA
            DISPLAY "Enter a command:"
@@ -95,11 +95,11 @@
                ACCEPT WS-INPUT-ID
                MOVE WS-INPUT-ID TO FS-RECORD-ID
                READ FS-RECORD-FILE INTO FS-RECORD-DATA
-      *>              INVALID KEY
-      *>                  DISPLAY "Key is invalid"
-      *>              NOT INVALID KEY
-                   DISPLAY "Name: "FS-NAME
-      *>          END-READ
+                   INVALID KEY
+                       DISPLAY "Key is invalid"
+                   NOT INVALID KEY
+                       DISPLAY "Name: "FS-NAME
+               END-READ
            END-IF
            .
 
@@ -112,8 +112,10 @@
 
            MOVE WS-RECORD-DATA TO FS-RECORD-DATA
            WRITE FS-RECORD-DATA
-               INVALID KEY DISPLAY "invalid write: "FS-RECORD-ID
-               NOT INVALID KEY DISPLAY "write key: "FS-RECORD-ID
+               INVALID KEY
+                   DISPLAY "invalid write: "FS-RECORD-ID
+               NOT INVALID KEY
+                   DISPLAY "write key: "FS-RECORD-ID
            END-WRITE
            .
 
