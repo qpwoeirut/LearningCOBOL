@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 5/11/2020
+      * Date: 5/11/2020, Updated 5/14/2020
       * Purpose: Write/update a file record by index
       * Tectonics: cobc
       ******************************************************************
@@ -17,7 +17,7 @@
 
        DATA DIVISION.
        FILE SECTION.
-           FD FS-RECORD-FILE RECORD CONTAINS 126 CHARACTERS.
+           FD FS-RECORD-FILE RECORD CONTAINS 128 CHARACTERS.
                01 FS-RECORD-DATA.
                    05 FS-RECORD-ID            PIC 9(10).
                    05 FS-NAME                 PIC X(100).
@@ -34,19 +34,6 @@
        WORKING-STORAGE SECTION.
            01 WS-FILE-STATUS              PIC X(2).
            01 WS-FILE-NAME                PIC X(100).
-           01 WS-RECORD-DATA.
-               05 WS-RECORD-ID            PIC 9(10).
-               05 WS-NAME                 PIC X(100).
-               05 WS-TIMESTAMP.
-                   10 WS-CURRENT-DATE.
-                       15 WS-YEAR         PIC 9(04).
-                       15 WS-MONTH        PIC 9(02).
-                       15 WS-DAY          PIC 9(02).
-                   10 WS-TIME.
-                       15 WS-HOURS        PIC 9(02).
-                       15 WS-MINUTE       PIC 9(02).
-                       15 WS-SECOND       PIC 9(02).
-                       15 WS-MILLISECONDS PIC 9(02).
 
            01 WS-COMMAND PIC 9(2) VALUE 0.
            01 WS-INPUT-ID PIC 9(10).
@@ -107,17 +94,12 @@
 
        WRITE-RECORD-PARA.
            DISPLAY "Enter ID to write"
-           ACCEPT WS-RECORD-ID
+           ACCEPT FS-RECORD-ID
            DISPLAY "Enter name:"
-           ACCEPT WS-NAME
-           MOVE FUNCTION CURRENT-DATE TO WS-TIMESTAMP
-
-           MOVE WS-RECORD-DATA TO FS-RECORD-DATA
+           ACCEPT FS-NAME
+           MOVE FUNCTION CURRENT-DATE TO FS-TIMESTAMP
            WRITE FS-RECORD-DATA
-               INVALID KEY
-                   DISPLAY "invalid write: "FS-RECORD-ID
-               NOT INVALID KEY
-                   DISPLAY "write key: "FS-RECORD-ID
+               INVALID KEY REWRITE FS-RECORD-DATA
            END-WRITE
            .
 
