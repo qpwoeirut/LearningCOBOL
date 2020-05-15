@@ -90,6 +90,9 @@
                    DISPLAY "Key is invalid"
                NOT INVALID KEY
                    DISPLAY "Name: "FS-NAME
+                   DISPLAY "MM/DD/YY: "FS-MONTH"/"FS-DAY"/"FS-YEAR
+                   DISPLAY "hh:mm:ss: "FS-HOURS":"FS-MINUTE":"FS-SECOND
+                                       "."FS-MILLISECONDS
            END-READ
            .
 
