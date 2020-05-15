@@ -43,6 +43,7 @@
            ACCEPT WS-FILE-NAME
 
            OPEN I-O FS-RECORD-FILE
+      *        If the file doesn't exist, create it
                IF WS-FILE-STATUS = '35'
                    CLOSE FS-RECORD-FILE
                    OPEN OUTPUT FS-RECORD-FILE
