@@ -45,10 +45,7 @@
            OPEN I-O FS-RECORD-FILE
       *        If the file doesn't exist, create it
                IF WS-FILE-STATUS = '35'
-                   CLOSE FS-RECORD-FILE
-                   OPEN OUTPUT FS-RECORD-FILE
-                   CLOSE FS-RECORD-FILE
-                   OPEN I-O FS-RECORD-FILE
+                   PERFORM CREATE-FILE-PARA
                END-IF
 
                PERFORM PRINT-HELP-PARA
@@ -106,6 +103,14 @@
                INVALID KEY REWRITE FS-RECORD-DATA
            END-WRITE
            .
+
+       CREATE-FILE-PARA.
+           CLOSE FS-RECORD-FILE
+           OPEN OUTPUT FS-RECORD-FILE
+           CLOSE FS-RECORD-FILE
+           OPEN I-O FS-RECORD-FILE
+           .
+
 
 
        END PROGRAM WRITE-FILE-BY-INDEX.
