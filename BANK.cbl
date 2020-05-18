@@ -22,6 +22,17 @@
                    05 FS-USER-ID PIC 9(16).
                    05 FS-NAME PIC X(100).
                    05 FS-BALANCE PIC V9(18).
+           FD FS-TRANSACTION-FILE.
+               01 FS-TRANSACTION-TIMESTAMP.
+                   05 FS-START-DATE.
+                       10 FS-START-YEAR          PIC 9(4).
+                       10 FS-START-MONTH         PIC 9(2).
+                       10 FS-START-DAY           PIC 9(2).
+                   05 FS-START-TIME.
+                       10 FS-START-HOURS         PIC 9(2).
+                       10 FS-START-MINUTE        PIC 9(2).
+                       10 FS-START-SECOND        PIC 9(2).
+                       10 FS-START-MILLISECONDS  PIC 9(2).
        WORKING-STORAGE SECTION.
            01 WS-USERS-FILE-STATUS PIC X(2).
            01 WS-COMMAND PIC 9(2) VALUE 1.
