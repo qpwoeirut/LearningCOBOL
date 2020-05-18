@@ -19,24 +19,42 @@
        FILE SECTION.
            FD FS-USERS-FILE.
                01 FS-USER.
-                   05 FS-USER-ID PIC 9(18).
+                   05 FS-USER-ID PIC 9(16).
                    05 FS-NAME PIC X(100).
-                   05 FS-BALANCE PIC $$$,$$$,$$$,$$$,$$9.99-.
+                   05 FS-BALANCE PIC V9(18).
        WORKING-STORAGE SECTION.
            01 WS-USERS-FILE-STATUS PIC X(2).
            01 WS-COMMAND PIC 9(2) VALUE 1.
 
            01 WS-USER.
-               05 WS-USER-ID PIC 9(18).
+               05 WS-USER-ID PIC 9(16).
                05 WS-NAME PIC X(100).
-               05 WS-BALANCE PIC $$$,$$$,$$$,$$$,$$9.99-.
+               05 WS-BALANCE PIC V9(18).
 
-           01 WS-MAX-ID PIC 9(18) VALUE 100000000000000000.
-           01 WS-RANDOM PIC V9(38).
+           01 WS-DISPLAY-BALANCE PIC $$$,$$$,$$$,$$$,$$$,$$9.99-.
+           01 WS-MIN-ID PIC 9(16) VALUE 1000000000000000.
+           01 WS-RANDOM PIC V9(16).
            01 WS-ID-COLLISION PIC X(3).
+
+           01 WS-TRANSACTION-AMOUNT PIC V9(10).
+           01 WS-SEED PIC 9(18).
+
+           01 WS-START-DATE-DATA.
+               05 WS-START-DATE.
+                   10 WS-START-YEAR          PIC 9(4).
+                   10 WS-START-MONTH         PIC 9(2).
+                   10 WS-START-DAY           PIC 9(2).
+               05 WS-START-TIME.
+                   10 WS-START-HOURS         PIC 9(2).
+                   10 WS-START-MINUTE        PIC 9(2).
+                   10 WS-START-SECOND        PIC 9(2).
+                   10 WS-START-MILLISECONDS  PIC 9(2).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            PERFORM 100-DISPLAY-HELP-PARA
+
+           MOVE FUNCTION CURRENT-DATE TO WS-START-DATE-DATA
+           MOVE FUNCTION RANDOM(WS-START-MILLISECONDS) TO WS-RANDOM
 
            DISPLAY "Enter a command:"
            ACCEPT WS-COMMAND
@@ -70,6 +88,7 @@
 
            STOP RUN.
 
+
        100-DISPLAY-HELP-PARA.
            DISPLAY "Bank interface:"
            DISPLAY "0) Quit"
@@ -79,6 +98,7 @@
            DISPLAY "4) Update account balance"
            DISPLAY "5) Add interest"
            .
+
 
        200-REGISTER-ACCOUNT-PARA.
            OPEN I-O FS-USERS-FILE
@@ -97,8 +117,8 @@
                MOVE "YES" TO WS-ID-COLLISION
                PERFORM UNTIL WS-ID-COLLISION = "NO"
                    MOVE FUNCTION RANDOM() TO WS-RANDOM
-                   MULTIPLY WS-MAX-ID BY WS-RANDOM GIVING FS-USER-ID
-                   ADD WS-MAX-ID TO FS-USER-ID
+                   MULTIPLY WS-MIN-ID BY WS-RANDOM GIVING FS-USER-ID
+                   ADD WS-MIN-ID TO FS-USER-ID
                    WRITE FS-USER
                        INVALID KEY DISPLAY "random id collision"
                        NOT INVALID KEY
@@ -110,6 +130,7 @@
            CLOSE FS-USERS-FILE
            .
 
+
        300-GET-ACCOUNT-INFO-PARA.
            DISPLAY "Enter id"
            ACCEPT FS-USER-ID
@@ -120,17 +141,47 @@
                    NOT INVALID KEY
                        DISPLAY "ID:                          "FS-USER-ID
                        DISPLAY "Name:                        "FS-NAME
-                       DISPLAY "Balance: "FS-BALANCE
+                       MOVE FS-BALANCE TO WS-DISPLAY-BALANCE
+                       DISPLAY "Balance: "WS-DISPLAY-BALANCE
                END-READ
            CLOSE FS-USERS-FILE
            .
 
+
        400-UPDATE-ACCOUNT-BALANCE-PARA.
+           DISPLAY "Enter ID of account"
+           ACCEPT WS-USER-ID
            DISPLAY "Enter amount of money to transact"
+           ACCEPT WS-TRANSACTION-AMOUNT
+
+
+           MOVE WS-USER TO FS-USER
+           OPEN I-O FS-USERS-FILE
+               READ FS-USERS-FILE
+                   INVALID KEY
+                       DISPLAY "ID does not exist"
+                   NOT INVALID KEY
+                       PERFORM 401-UPDATE-BALANCE-IN-FILE-PARA
+               END-READ
+           CLOSE FS-USERS-FILE
+
+           DISPLAY "Soon, we will add support for transaction history!"
            .
+
+
+       401-UPDATE-BALANCE-IN-FILE-PARA.
+           SUBTRACT WS-TRANSACTION-AMOUNT FROM FS-BALANCE
+           REWRITE FS-USER
+               INVALID KEY DISPLAY "ID does not exist somehow"
+               NOT INVALID KEY DISPLAY "Balance update successful"
+           END-REWRITE
+           .
+
 
        500-UPDATE-ALL-INTEREST-PARA.
            DISPLAY "You all got 0% interest! Congrats!"
            .
+
+
 
        END PROGRAM BANK.
