@@ -59,9 +59,11 @@
                05 WS-NAME    PIC X(100).
                05 WS-BALANCE PIC S9(18)V99.
 
-           01 WS-DISPLAY-MONEY-TMP PIC $$$,$$$,$$$,$$$,$$$,$$9.99.
-           01 WS-DISPLAY-MONEY PIC X(30).
-           01 WS-DISPLAY-INDEX PIC 9(2).
+           01 WS-DISPLAY              PIC X(30).
+           01 WS-DISPLAY-INDEX        PIC 9(2).
+           01 WS-DISPLAY-MONEY-TMP    PIC S9(18)V99.
+           01 WS-DISPLAY-MONEY-FORMAT PIC $$$,$$$,$$$,$$$,$$$,$$9.99.
+           01 WS-DISPLAY-NUMBER-TMP   PIC Z(17)9.
 
            01 WS-MIN-ID       PIC 9(16) VALUE 1000000000000000.
            01 WS-RANDOM       PIC V9(16).
@@ -215,16 +217,17 @@
                READ FS-USERS-FILE
                    INVALID KEY DISPLAY "ID does not exist"
                    NOT INVALID KEY
-                       DISPLAY "ID:      "FS-USER-ID
-                       DISPLAY "Name:    "FS-NAME
+                       DISPLAY "ID:                "FS-USER-ID
+                       DISPLAY "Name:              "FS-NAME
+
                        MOVE FS-BALANCE TO WS-DISPLAY-MONEY-TMP
                        PERFORM CALCULATE-MONEY-DISPLAY-PARA
+                       DISPLAY "Balance:           "WS-DISPLAY
 
-                       IF FS-BALANCE IS NEGATIVE
-                           DISPLAY "Balance: -"WS-DISPLAY-MONEY
-                       ELSE
-                           DISPLAY "Balance: "WS-DISPLAY-MONEY
-                       END-IF
+                       MOVE FS-TRANSACTION-COUNT
+                         TO WS-DISPLAY-NUMBER-TMP
+                       PERFORM CALCULATE-NUMBER-DISPLAY-PARA
+                       DISPLAY "# of transactions: "WS-DISPLAY
                END-READ
            CLOSE FS-USERS-FILE
            .
@@ -260,16 +263,18 @@
            READ FS-TRANSACTION-FILE RECORD
                INVALID KEY DISPLAY "invalid key "WS-TRANSACTION-NUMBER
                NOT INVALID KEY
-                   DISPLAY "Transaction #"FS-TRANSACTION-NUMBER
+                   MOVE FS-TRANSACTION-NUMBER TO WS-DISPLAY-NUMBER-TMP
+                   PERFORM CALCULATE-NUMBER-DISPLAY-PARA
+                   DISPLAY "Transaction #"WS-DISPLAY
 
                    MOVE FS-TRANSACTION-AMOUNT TO WS-DISPLAY-MONEY-TMP
                    PERFORM CALCULATE-MONEY-DISPLAY-PARA
-                   DISPLAY "Amount:  "WS-DISPLAY-MONEY
+                   DISPLAY "Amount:  "WS-DISPLAY
 
                    MOVE FS-TRANSACTION-END-BALANCE
                      TO WS-DISPLAY-MONEY-TMP
                    PERFORM CALCULATE-MONEY-DISPLAY-PARA
-                   DISPLAY "Balance: "WS-DISPLAY-MONEY
+                   DISPLAY "Balance: "WS-DISPLAY
            END-READ
            SUBTRACT 1 FROM WS-TRANSACTION-NUMBER
            .
@@ -287,6 +292,7 @@
                    INVALID KEY
                        DISPLAY "ID does not exist"
                    NOT INVALID KEY
+                       ADD WS-TRANSACTION-AMOUNT TO FS-BALANCE
                        ADD 1 TO FS-TRANSACTION-COUNT
                        PERFORM 510-UPDATE-ACCOUNT-IN-FILE-PARA
                        MOVE FS-TRANSACTION-COUNT
@@ -298,8 +304,6 @@
 
 
        510-UPDATE-ACCOUNT-IN-FILE-PARA.
-           ADD WS-TRANSACTION-AMOUNT TO FS-BALANCE
-           ADD 1 TO FS-TRANSACTION-COUNT
            REWRITE FS-USER
                INVALID KEY DISPLAY "ID does not exist somehow"
                NOT INVALID KEY DISPLAY "Balance update successful"
@@ -311,17 +315,15 @@
            MOVE WS-TRANSACTION-NUMBER TO FS-TRANSACTION-NUMBER
            MOVE FUNCTION CURRENT-DATE TO FS-TRANSACTION-TIMESTAMP
            MOVE WS-TRANSACTION-AMOUNT TO FS-TRANSACTION-AMOUNT
-           ADD WS-TRANSACTION-AMOUNT TO FS-BALANCE
-           GIVING FS-TRANSACTION-END-BALANCE
+           MOVE FS-BALANCE            TO FS-TRANSACTION-END-BALANCE
 
            STRING "bank_transactions/"WS-USER-ID".txt" DELIMITED BY SIZE
              INTO WS-TRANSACTION-FILENAME
-           OPEN EXTEND FS-TRANSACTION-FILE
-               DISPLAY "status: "WS-TRANSACTION-FILE-STATUS
+           OPEN I-O FS-TRANSACTION-FILE
                WRITE FS-TRANSACTION
                    INVALID KEY DISPLAY "invalid key adding transaction"
                    NOT INVALID KEY DISPLAY "added key: "
-                   WS-TRANSACTION-NUMBER
+                   FS-TRANSACTION-NUMBER
                END-WRITE
            CLOSE FS-TRANSACTION-FILE
            .
@@ -334,13 +336,32 @@
 
        CALCULATE-MONEY-DISPLAY-PARA.
            MOVE 1 TO WS-DISPLAY-INDEX
+           MOVE WS-DISPLAY-MONEY-TMP TO WS-DISPLAY-MONEY-FORMAT
 
-           PERFORM UNTIL WS-DISPLAY-MONEY-TMP(WS-DISPLAY-INDEX:1) <> ' '
+           PERFORM
+               UNTIL WS-DISPLAY-MONEY-FORMAT(WS-DISPLAY-INDEX:1) <> ' '
                ADD 1 TO WS-DISPLAY-INDEX
            END-PERFORM
 
-           MOVE WS-DISPLAY-MONEY-TMP(WS-DISPLAY-INDEX:)
-             TO WS-DISPLAY-MONEY
+           IF WS-DISPLAY-MONEY-TMP IS NEGATIVE
+               STRING "-" DELIMITED BY SIZE
+                      WS-DISPLAY-MONEY-FORMAT(WS-DISPLAY-INDEX:)
+                          DELIMITED BY SIZE
+                      INTO WS-DISPLAY
+           ELSE
+               MOVE WS-DISPLAY-MONEY-FORMAT(WS-DISPLAY-INDEX:)
+                 TO WS-DISPLAY
+           END-IF
+           .
+
+       CALCULATE-NUMBER-DISPLAY-PARA.
+           MOVE 1 TO WS-DISPLAY-INDEX
+           PERFORM
+               UNTIL WS-DISPLAY-NUMBER-TMP(WS-DISPLAY-INDEX:1) <> ' '
+               ADD 1 TO WS-DISPLAY-INDEX
+           END-PERFORM
+
+           MOVE WS-DISPLAY-NUMBER-TMP(WS-DISPLAY-INDEX:) TO WS-DISPLAY
            .
 
 
