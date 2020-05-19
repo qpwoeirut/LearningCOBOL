@@ -102,6 +102,7 @@
                MOVE 1 TO WS-COMMAND
                PERFORM UNTIL WS-COMMAND = 0
                    PERFORM 000-PERFORM-COMMAND-PARA
+                   DISPLAY ' '
                    DISPLAY "Enter a command:"
                    ACCEPT WS-COMMAND
                END-PERFORM
@@ -171,9 +172,8 @@
                    MULTIPLY WS-MIN-ID BY WS-RANDOM GIVING FS-USER-ID
                    ADD WS-MIN-ID TO FS-USER-ID
                    WRITE FS-USER
-                       INVALID KEY DISPLAY "random id collision"
                        NOT INVALID KEY
-                           DISPLAY "Registration successful"
+                           DISPLAY "Registration successful!"
                            DISPLAY "Remember your id: "FS-USER-ID
                            PERFORM 220-CREATE-TRANSACTION-FILE
                            MOVE "NO" TO WS-ID-COLLISION
@@ -203,7 +203,8 @@
 
            OPEN OUTPUT FS-TRANSACTION-FILE
                WRITE FS-TRANSACTION
-                   INVALID KEY DISPLAY "invalid key for transaction"
+                   INVALID KEY
+                       DISPLAY "INVALID KEY - "WS-TRANSACTION-NUMBER
                END-WRITE
            CLOSE FS-TRANSACTION-FILE
            .
@@ -234,7 +235,7 @@
 
 
        400-LIST-ACCOUNT-TRANSACTION-HISTORY-PARA.
-           DISPLAY "Enter ID of account"
+           DISPLAY "Enter account ID:"
            ACCEPT WS-USER-ID
 
            MOVE WS-USER-ID TO FS-USER-ID
@@ -253,6 +254,9 @@
                    DISPLAY "Account does not exist"
                ELSE
                    PERFORM 410-PRINT-TRANSACTION-PARA
+                   VARYING WS-TRANSACTION-NUMBER
+                   FROM FS-TRANSACTION-COUNT
+                   BY -1
                    UNTIL WS-TRANSACTION-NUMBER < 1
                END-IF
            CLOSE FS-TRANSACTION-FILE
@@ -261,7 +265,7 @@
 
        410-PRINT-TRANSACTION-PARA.
            READ FS-TRANSACTION-FILE RECORD
-               INVALID KEY DISPLAY "invalid key "WS-TRANSACTION-NUMBER
+               INVALID KEY DISPLAY "INVALID KEY - "WS-TRANSACTION-NUMBER
                NOT INVALID KEY
                    MOVE FS-TRANSACTION-NUMBER TO WS-DISPLAY-NUMBER-TMP
                    PERFORM CALCULATE-NUMBER-DISPLAY-PARA
@@ -269,21 +273,20 @@
 
                    MOVE FS-TRANSACTION-AMOUNT TO WS-DISPLAY-MONEY-TMP
                    PERFORM CALCULATE-MONEY-DISPLAY-PARA
-                   DISPLAY "Amount:  "WS-DISPLAY
+                   DISPLAY "Amount:     "WS-DISPLAY
 
                    MOVE FS-TRANSACTION-END-BALANCE
                      TO WS-DISPLAY-MONEY-TMP
                    PERFORM CALCULATE-MONEY-DISPLAY-PARA
-                   DISPLAY "Balance: "WS-DISPLAY
+                   DISPLAY "Balance:    "WS-DISPLAY
            END-READ
-           SUBTRACT 1 FROM WS-TRANSACTION-NUMBER
            .
 
 
        500-UPDATE-ACCOUNT-PARA.
-           DISPLAY "Enter ID of account"
+           DISPLAY "Enter account ID:"
            ACCEPT WS-USER-ID
-           DISPLAY "Enter amount of money to transact"
+           DISPLAY "Enter amount of money to transact:"
            ACCEPT WS-TRANSACTION-AMOUNT
 
            MOVE WS-USER TO FS-USER
@@ -305,8 +308,10 @@
 
        510-UPDATE-ACCOUNT-IN-FILE-PARA.
            REWRITE FS-USER
-               INVALID KEY DISPLAY "ID does not exist somehow"
-               NOT INVALID KEY DISPLAY "Balance update successful"
+               INVALID KEY
+                   DISPLAY "INVALID ID - "FS-USER-ID
+               NOT INVALID KEY
+                   DISPLAY "Balance update successful"
            END-REWRITE
            .
 
@@ -321,9 +326,8 @@
              INTO WS-TRANSACTION-FILENAME
            OPEN I-O FS-TRANSACTION-FILE
                WRITE FS-TRANSACTION
-                   INVALID KEY DISPLAY "invalid key adding transaction"
-                   NOT INVALID KEY DISPLAY "added key: "
-                   FS-TRANSACTION-NUMBER
+                   INVALID KEY
+                       DISPLAY "INVALID KEY - "WS-TRANSACTION-NUMBER
                END-WRITE
            CLOSE FS-TRANSACTION-FILE
            .
@@ -347,7 +351,7 @@
                STRING "-" DELIMITED BY SIZE
                       WS-DISPLAY-MONEY-FORMAT(WS-DISPLAY-INDEX:)
                           DELIMITED BY SIZE
-                      INTO WS-DISPLAY
+                 INTO WS-DISPLAY
            ELSE
                MOVE WS-DISPLAY-MONEY-FORMAT(WS-DISPLAY-INDEX:)
                  TO WS-DISPLAY
@@ -357,7 +361,7 @@
        CALCULATE-NUMBER-DISPLAY-PARA.
            MOVE 1 TO WS-DISPLAY-INDEX
            PERFORM
-               UNTIL WS-DISPLAY-NUMBER-TMP(WS-DISPLAY-INDEX:1) <> ' '
+             UNTIL WS-DISPLAY-NUMBER-TMP(WS-DISPLAY-INDEX:1) <> ' '
                ADD 1 TO WS-DISPLAY-INDEX
            END-PERFORM
 
