@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 5/21/2020
+      * Date: 5/21/2020, Updated 5/25/2020
       * Purpose: Convert year, month, day to number of days since
       *          12/31/1600
       * Tectonics: cobc

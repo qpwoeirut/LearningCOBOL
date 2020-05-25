@@ -1,6 +1,6 @@
       ******************************************************************
       * Author: Stanley Zhong
-      * Date: 5/7/2020, Updated 5/11/2020
+      * Date: 5/7/2020, Updated 5/25/2020
       * Purpose: Print the time it takes for the program to run
       * Tectonics: cobc
       ******************************************************************
