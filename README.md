@@ -1,5 +1,5 @@
 # LearningCOBOL
-A repository of programs written to self-learn COBOL
+A repository of programs written to self-learn COBOL, using OpenCobolIDE 4.7.3 on Mac
 
 Most of the stuff in here is very basic, and mostly serve as programming exercises to get familiar with the language.
 Right now, the most complex program is BANK, which acts as the backend of a banking system.
