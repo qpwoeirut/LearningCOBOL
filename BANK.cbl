@@ -149,8 +149,7 @@
                        PERFORM 300-GET-ACCOUNT-INFO-PARA
                    ELSE
                        IF WS-COMMAND = 4
-                            PERFORM
-                               400-LIST-ACCOUNT-TRANSACTION-HISTORY-PARA
+                       PERFORM 400-LIST-ACCOUNT-TRANSACTION-HISTORY-PARA
                        ELSE
                            IF WS-COMMAND = 5
                                PERFORM 500-UPDATE-ACCOUNT-PARA
